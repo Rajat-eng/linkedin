@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +18,6 @@ import com.codingshuttle.linkedin.posts_service.dto.PostCreateRequestDto;
 import com.codingshuttle.linkedin.posts_service.dto.PostDto;
 import com.codingshuttle.linkedin.posts_service.service.PostsService;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -25,9 +27,10 @@ public class PostsController {
 
     private final PostsService postsService;
 
-    @PostMapping
-    public ResponseEntity<PostDto> createPost(@RequestBody PostCreateRequestDto postDto, HttpServletRequest httpServletRequest) {
-        PostDto createdPost = postsService.createPost(postDto, 1L);
+    @PostMapping("/")
+    public ResponseEntity<PostDto> createPost(@RequestBody PostCreateRequestDto postDto) {
+        String userId = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        PostDto createdPost = postsService.createPost(postDto, Long.valueOf(userId));
         return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
     }
 
@@ -41,6 +44,12 @@ public class PostsController {
     public ResponseEntity<List<PostDto>> getAllPostsOfUser(@PathVariable Long userId) {
         List<PostDto> posts = postsService.getAllPostsOfUser(userId);
         return ResponseEntity.ok(posts);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")  // Only admins can access
+    @GetMapping("/admin")
+    public String adminEndpoint() {
+        return "Admin access granted!";
     }
 
 }
