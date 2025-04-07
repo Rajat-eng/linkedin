@@ -1,32 +1,38 @@
 spring.application.name: api-gateway
-server.port: 8080
-eureka.client.service-url.defaultZone: http://localhost:8761/eureka/
+server.port: 8081
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
 
-jwt.secretKey: asdfladf98a7df89aysf8d9yasiudfha9s87dfa89syudhfa98sdfyaisuhdfa98sfy
+jwt:
+  secretKey: asdfladf98a7df89aysf8d9yasiudfha9s87dfa89syudhfa98sdfyaisuhdfa98sfy
 
 spring:
   cloud:
     gateway:
       routes:
-      - id: user-service
-        uri: lb://user-service
-        predicates:
-            - Path=api/v1/users/**
-        filters:
-            - stripPrefix=2
-     
-      - id: posts-service
-        uri: lb://posts-service
-        predicates:
-        - Path=api/v1/posts/**
-        filters:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/v1/users/**
+          filters:
+            - StripPrefix=2
+
+        - id: posts-service
+          uri: lb://POSTS-SERVICE
+          predicates:
+            - Path=/api/v1/posts/**
+          filters:
             - StripPrefix=2
             - AuthenticationFilter
-      - id: connections-service
-        uri: lb://CONNECTIONS-SERVICE
-        predicates:
+        - id: connections-service
+          uri: lb://CONNECTIONS-SERVICE
+          predicates:
             - Path=/api/v1/connections/**
-        filters:
+          filters:
             - StripPrefix=2
             - name: AuthenticationFilter
-        
