@@ -3,5 +3,6 @@
     "java.project.sourcePaths": [
         ""
     ],
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "svn.ignoreMissingSvnWarning": true
 }

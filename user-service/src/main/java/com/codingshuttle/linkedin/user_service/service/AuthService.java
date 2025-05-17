@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class AuthService {
 
         User user = modelMapper.map(signupRequestDto, User.class);
         user.setPassword(PasswordUtil.hashPassword(signupRequestDto.getPassword()));
-
+        user.setRoles(Set.copyOf(signupRequestDto.getRoles())); 
         User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserDto.class);
     }

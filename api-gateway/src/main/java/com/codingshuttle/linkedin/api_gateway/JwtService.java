@@ -33,7 +33,7 @@ public class JwtService {
         return Long.valueOf(claims.getSubject());
     }
 
-    // public List<String> getUserRolesFromToken(String token) {
-    //     return extractClaims(token).get("roles", List.class); 
-    // }
+    public String getUserRolesFromToken(String token) {
+        return extractClaims(token).get("roles", String.class).replaceAll("[\\[\\]\"]", ""); 
+    }
 }

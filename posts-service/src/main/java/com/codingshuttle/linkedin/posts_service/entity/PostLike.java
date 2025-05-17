@@ -1,3 +1,4 @@
+
 package com.codingshuttle.linkedin.posts_service.entity;
 
 import jakarta.persistence.*;

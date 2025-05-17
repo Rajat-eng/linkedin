@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codingshuttle.linkedin.posts_service.dto.PostCreateRequestDto;
+
 import com.codingshuttle.linkedin.posts_service.dto.PostDto;
 import com.codingshuttle.linkedin.posts_service.service.PostsService;
 
@@ -26,10 +28,10 @@ public class PostsController {
 
     private final PostsService postsService;
 
-    @PostMapping("/")
+    @Secured("ROLE_USER")
+    @PostMapping("/create")
     public ResponseEntity<PostDto> createPost(@RequestBody PostCreateRequestDto postDto) {
-        String userId = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        PostDto createdPost = postsService.createPost(postDto, Long.valueOf(userId));
+        PostDto createdPost = postsService.createPost(postDto);
         return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
     }
 
@@ -45,7 +47,7 @@ public class PostsController {
         return ResponseEntity.ok(posts);
     }
 
-    // @PreAuthorize("hasAuthority('ADMIN')")  // Only admins can access
+    @Secured("ROLE_ADMIN")    
     @GetMapping("/admin")
     public String adminEndpoint() {
         return "Admin access granted!";
